@@ -25,7 +25,7 @@
 
 
 using namespace std;
-#define MAX_BUFFER_SIZE 1024
+#define MAX_BUFFER_SIZE 100000
 
 
 class SocketOpen{
@@ -163,6 +163,14 @@ class SocketOpen{
         clientSendToServer( client_fd ,  msg_list );
         return  1;
     }
+    int getSongs( char * maybeName ){
+        char sendData[MAX_BUFFER_SIZE] = "GETSONGS:[NAME:[";
+        strcat (sendData, maybeName);
+        strcat(sendData, "]]");
+        clientSendToServer( client_fd , sendData );
+        return  1;
+    }
+
     int connectUser( char * name , char * buffer_msg ){
         char sendData[MAX_BUFFER_SIZE] = "CONNECT:[NAME:[";
         strcat(sendData, name);
@@ -176,11 +184,11 @@ class SocketOpen{
 
 
 };
-char   msg_Menu [5][30] =   {{"\n\n1. ver lista de usuarios",},{"\n2. connectarse a un usauario"},{" \n3.ver data resivida\n\n"}};
+char   msg_Menu [5][30] =   {{"\n\n1. ver lista de usuarios",},{"\n2. connectarse a un usauario"},{"\n3. ver data resivida"},{"\n4. buscar una cancion\n\n"}};
 
 void impimirMenu ( int num ){
         char data[40];
-        for( int i = 0 ; i < 3 ; i++){
+        for( int i = 0 ; i < 4 ; i++){
             bzero(data, sizeof( data ));
             if(num == i ){
                 strcpy(data, RED);
@@ -220,7 +228,7 @@ int main(int argc, char const* argv[]){
                 system("clear");
                 impimirMenu(1);
                 char name[20];
-                printf("\nintroduca el nombre a connetar\n");
+                printf("\nintroduca el nombre a buscar\n");
                 bzero(send_buff, MAX_BUFFER_SIZE );
                 bzero(name, 20);
                 cin>>name;
@@ -241,7 +249,23 @@ int main(int argc, char const* argv[]){
                 socketOpen.clientSelect();
                 break;
             }
-        
+
+          case 4 : {
+                system("clear");
+                impimirMenu(3);
+                char name[100];
+                printf("\nintroduca el nombre de  la cancion a buscar \n");
+                bzero(send_buff, MAX_BUFFER_SIZE );
+                bzero(name, 100);
+                cin>>name;
+                printf("\nprecione Y para buscar la cancion  %s ||  Z para salir\n",name);
+                cin>>data;
+                if(data == 'y' ){
+                    socketOpen.getSongs( name );
+                }             
+                system("clear");
+                break;
+          }
         }
     }while (1);
 
